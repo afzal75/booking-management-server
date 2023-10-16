@@ -10,145 +10,101 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 model User {
-  id            String    @id @default(uuid())
-  email         String    @unique
-  name          String
-  role          Role
-  password      String
-  contactNumber String
-  address       String
-  profileImg    String
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  Booking       Booking[]
-  Reviews       Reviews[]
+  id               String            @id @default(uuid())
+  email            String            @unique
+  password         String
+  role             String           @default("user")
+  name             String           @default("")
+  profileImage     String           @default("")
+  phoneNumber      String           @default("")
+  reviews          Review[]
+  bookings         Booking[]
 
   @@map("users")
 }
 
-enum Role {
-  admin
-  user
-  super_admin
-}
-
-model Categories {
-  id        String     @id @default(uuid())
-  title     String
-  imageLink String
-  status    Boolean    @default(false)
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-  services  Services[]
-
-  @@map("categories")
-}
-
-model Services {
-  id          String     @id @default(uuid())
-  title       String
+model Service {
+  id   String  @id @default(uuid())
+  name String   
+  price Int
+  category String
+  images String
+  location String
   description String
-  price       String
-  tax         String
-  categoryId  String
-  location    Location
-  category    Categories @relation(fields: [categoryId], references: [id])
-  imageLink   String
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
-  booking     Booking[]
-  reviews     Reviews[]
+  channel String
+  hdChannel String
+  connectionCost Int
+  status String
+  reviews Review[]
 
   @@map("services")
 }
 
-enum Location {
-  Mirpur
-  Uttara
-  Gulshan
-  Banani
-  Dhanmondi
-  Mohammadpur
-  Motijheel
-  Khilgaon
-  Shyamoli
-  Farmgate
-  Mohakhali
-  Tejgaon
-  Rampura
-  Badda
-  Malibagh
-  Jatrabari
-  Demra
-  Kadamtali
-  Keraniganj
-}
-
-model Reviews {
-  id        String   @id @default(uuid())
-  userId    String
-  user      User     @relation(fields: [userId], references: [id])
+model Review {
+  id         String  @id @default(uuid())
+  name       String
+  email      String
+  userReview String
+  userId String
   serviceId String
-  service   Services @relation(fields: [serviceId], references: [id])
-  review    String
-  rating    String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  service    Service @relation(fields: [serviceId], references: [id])
+  user    User @relation(fields: [userId], references: [id])
 
   @@map("reviews")
 }
 
-model Booking {
-  id        String        @id @default(uuid())
-  date      String
-  startTime String
-  endTime   String
-  userId    String
-  user      User          @relation(fields: [userId], references: [id])
-  serviceId String
-  service   Services      @relation(fields: [serviceId], references: [id])
-  status    BookingStatus
-  createdAt DateTime      @default(now())
-  updatedAt DateTime      @updatedAt
+model FeedBack {
+  id String @id @default(uuid())
+  name String
+  email String
+  comments String
 
-  @@map("bookings")
-}
-
-enum BookingStatus {
-  pending
-  accepted
-  rejected
+  @@map("feedbacks")
 }
 
 model Blog {
-  id        String   @id @default(uuid())
-  title     String
-  content   String
-  imageLink String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id String @id @default(uuid())
+  title String
+  name String
+  images String
+  description String
+  createdAt    DateTime      @default(now())
 
-  @@map("blog")
+  @@map("blogs")
 }
 
-model Faqs {
-  id        String   @id @default(uuid())
-  question  String
-  answer    String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+model Faq {
+  id String @id @default(uuid())
+  title String
+  description String
 
   @@map("faqs")
 }
 
-model Feedback {
-  id        String   @id @default(uuid())
-  name      String
-  email     String
-  message   String
-  createdAt DateTime @default(now())
+model Booking {
+  id String @id @default(uuid())
+  name String
+  phoneNumber String
+  email String
+  district String
+  thana String
+  address String
+  package Package
+  userId String
+  user    User @relation(fields: [userId], references: [id])
+  status String @default("pending")
 
-  @@map("feedback")
+  @@map("bookings")
+}
+
+enum Package {
+  wifiInternet
+  mobileConnection
+  tvBox
+  smartHome
+  satelliteTv
+  internet
+  broadband
+  business
 }

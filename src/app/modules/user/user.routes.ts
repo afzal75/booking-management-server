@@ -1,44 +1,36 @@
 import express from 'express';
-
 import { ENUM_USER_ROLE } from '../../../enums/user';
 import auth from '../../middlewares/auth';
 import { UserController } from './user.controller';
-
 const router = express.Router();
 
+// user routes
+router.get('/users', UserController.getAllUsers);
 router.get(
-  '/users/all',
-  auth(ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.SUPER_ADMIN),
-  UserController.getAllFromDB
+  '/profile',
+  auth(ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.USER),
+  UserController.getUserProfile
 );
-
 router.get(
-  '/user/:id',
-  auth(ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.SUPER_ADMIN),
-  UserController.getByIdFromDB
+  '/users/:id',
+  auth(ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.USER),
+  UserController.getSingleUser
 );
 
 router.patch(
-  '/superadmin/users/:id',
-  auth(ENUM_USER_ROLE.SUPER_ADMIN),
-  UserController.updateAdminRoles
+  '/users/:id',
+  auth(ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.USER),
+  UserController.updateSingleUser
 );
 
 router.delete(
-  '/user/:id',
-  auth(ENUM_USER_ROLE.ADMIN),
-  UserController.deleteFromDB
-);
-router.patch(
-  '/profile/',
-  auth(ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.USER, ENUM_USER_ROLE.SUPER_ADMIN),
-  UserController.updateIntoDB
+  '/users/:id',
+  auth(ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.USER),
+  UserController.deleteSingleUser
 );
 
-router.get(
-  '/profile',
-  auth(ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.USER, ENUM_USER_ROLE.SUPER_ADMIN),
-  UserController.getProfile
-);
+// authentication
+// router.post('/signup', UserController.createUser);
+// router.post('/signin', UserController.loginUser);
 
-export const UserRouter = router;
+export const UserRoutes = router;
